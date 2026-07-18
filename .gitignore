@@ -2,8 +2,10 @@
 LearningFlow.txt
 atlas
 credential.txt
+notebooks/cred.py
 
 local_s3/
+
 
 
 # Byte-compiled / optimized / DLL files

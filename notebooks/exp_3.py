@@ -17,12 +17,14 @@ import warnings
 warnings.simplefilter("ignore", UserWarning)
 warnings.filterwarnings("ignore")
 
+from cred import Credential_A as MINE
+
 # Suppress MLflow artifact download warnings
 # os.environ["MLFLOW_DISABLE_ARTIFACTS_DOWNLOAD"] = "1"
 
 # Set MLflow Tracking URI & DAGsHub integration
-MLFLOW_TRACKING_URI = "https://dagshub.com/priyanshu24003/FeedBack.mlflow"
-dagshub.init(repo_owner='priyanshu24003', repo_name='FeedBack', mlflow=True)
+MLFLOW_TRACKING_URI = MINE.URI
+dagshub.init(repo_owner=MINE.OWNER, repo_name=MINE.PROJECT_NAME, mlflow=True)
 mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
 mlflow.set_experiment("LogisticRegression Hyperparameter Tuning")
 

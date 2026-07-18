@@ -24,15 +24,15 @@ import warnings
 warnings.simplefilter("ignore", UserWarning)
 warnings.filterwarnings("ignore")
 
-
+from cred import Credential_A as MINE
 
 # ========================== CONFIGURATION ==========================
 CONFIG = {
     "data_path": "notebooks/data.csv",
     "test_size": 0.2,
-    "mlflow_tracking_uri": "https://dagshub.com/priyanshu24003/FeedBack.mlflow",
-    "dagshub_repo_owner": "priyanshu24003",
-    "dagshub_repo_name": "FeedBack",
+    "mlflow_tracking_uri": MINE.URI,
+    "dagshub_repo_owner": MINE.OWNER,
+    "dagshub_repo_name": MINE.PROJECT_NAME,
     "experiment_name": "CountVector vs TfIdf"
 }
 # ========================== SETUP MLflow & DAGSHUB ==========================
