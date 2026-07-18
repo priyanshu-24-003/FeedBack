@@ -3,6 +3,9 @@ LearningFlow.txt
 atlas
 credential.txt
 
+local_s3/
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
@@ -221,3 +224,4 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+/local_s3
