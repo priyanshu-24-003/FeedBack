@@ -5,12 +5,14 @@ credential.txt
 notebooks/cred.py
 receipt-user_accessKeys.csv
 src/connections/credents.py
+src/model/credents.py
 
 
 local_s3/
 data/raw
 data/
 models/
+reports
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
