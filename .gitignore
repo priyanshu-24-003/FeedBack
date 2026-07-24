@@ -3,10 +3,12 @@ LearningFlow.txt
 atlas
 credential.txt
 notebooks/cred.py
+receipt-user_accessKeys.csv
 
 local_s3/
+data/raw
 
-
+src/connections/credents.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
