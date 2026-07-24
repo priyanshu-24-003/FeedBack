@@ -4,11 +4,13 @@ atlas
 credential.txt
 notebooks/cred.py
 receipt-user_accessKeys.csv
+src/connections/credents.py
+
 
 local_s3/
 data/raw
-
-src/connections/credents.py
+data/
+models/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
