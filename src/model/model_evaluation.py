@@ -11,6 +11,8 @@ import os
 from src.logger import logging
 from src.model.credents import Credential
 
+logging.critical('Model Evaluation Started on tracking server dagshub ')
+
 
 # Below code block is for production use
 # -------------------------------------------------------------------------------------
@@ -109,7 +111,6 @@ def save_model_info(run_id: str, model_path: str, file_path: str) -> None:
         raise
 
 def main():
-    logging.critical('Model Evaluation Started on tracking server dagshub ')
     mlflow.set_experiment("My-DVC-Pipeline-Experiment")
     with mlflow.start_run() as run:  # Start an MLflow run
         try:
