@@ -5,8 +5,8 @@ from datetime import datetime
 import sys
 
 # Constants for log configuration
-LOG_DIR = 'logs'
-LOG_FILE = f"{datetime.now().strftime('%m_%d_%Y_%H_%M_%S')}.log"
+LOG_DIR = f"logs/{datetime.now().strftime('%m_%d_%Y_%H')}"
+LOG_FILE = f"{datetime.now().strftime('%m_%d_%Y_%H_%M_%S')}{__name__}.log"
 MAX_LOG_SIZE = 5 * 1024 * 1024  # 5 MB
 BACKUP_COUNT = 3  # Number of backup log files to keep
 

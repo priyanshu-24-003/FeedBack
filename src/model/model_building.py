@@ -4,6 +4,8 @@ import pickle
 from sklearn.linear_model import LogisticRegression
 import yaml
 from src.logger import logging
+# import logging
+
 
 
 def load_data(file_path: str) -> pd.DataFrame:
