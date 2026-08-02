@@ -9,7 +9,6 @@ import yaml
 import logging
 from src.logger import logging
 from src.connections import s3_connection
-from src.credents import Credential
 
 
 def load_params(params_path: str) -> dict:
@@ -80,9 +79,9 @@ def main():
         test_size = params['data_ingestion']['test_size']
         # test_size = 0.2
         
-        # df = load_data(data_url='https://raw.githubusercontent.com/vikashishere/Datasets/refs/heads/main/data.csv')
-        s3 = s3_connection.s3_operations(Credential.S3_Bucket_Name, Credential.Access_Key, Credential.Secret_Key)
-        df = s3.fetch_file_from_s3("data.csv")
+        df = load_data(data_url='https://raw.githubusercontent.com/vikashishere/Datasets/refs/heads/main/data.csv')
+        # s3 = s3_connection.s3_operations(Credential.S3_Bucket_Name, Credential.Access_Key, Credential.Secret_Key)
+        # df = s3.fetch_file_from_s3("data.csv")
 
         final_df = preprocess_data(df)
         train_data, test_data = train_test_split(final_df, test_size=test_size, random_state=42)

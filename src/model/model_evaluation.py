@@ -9,7 +9,7 @@ import mlflow.sklearn
 import dagshub
 import os
 from src.logger import logging
-from src.model.credents import Credential
+from src.credents import Credential
 
 logging.critical('Model Evaluation Started on tracking server dagshub ')
 
