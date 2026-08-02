@@ -11,7 +11,9 @@ src/credents.py
 
 local_s3/
 data/raw
-data/
+data/interim
+data/processed
+data/external
 models/
 reports
 
