@@ -33,5 +33,7 @@ jobs:
           S3BUCKETNAME: ${{ secrets.S3BUCKETNAME }}
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          URI: ${{ secrets.URI }}
+          OWNER: ${{ secrets.OWNER }}
         run: |
           dvc repro

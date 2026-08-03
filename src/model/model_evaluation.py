@@ -9,7 +9,7 @@ import mlflow.sklearn
 import dagshub
 import os
 from src.logger import logging
-from src.credents import Credential
+from src.connections.credentials import Credential
 
 logging.critical('Model Evaluation Started on tracking server dagshub ')
 
@@ -34,8 +34,10 @@ logging.critical('Model Evaluation Started on tracking server dagshub ')
 
 # Below code block is for local use
 # -------------------------------------------------------------------------------------
-mlflow.set_tracking_uri(Credential.URI)
-dagshub.init(repo_owner=Credential.OWNER, repo_name=Credential.PROJECT_NAME, mlflow=True)
+mlflow_uri = os.getenv(Credential.URI)
+repo_owner = os.getenv(Credential.OWNER)
+mlflow.set_tracking_uri(mlflow_uri)
+dagshub.init(repo_owner=repo_owner, repo_name=Credential.PROJECT_NAME, mlflow=True)
 # -------------------------------------------------------------------------------------
 
 
