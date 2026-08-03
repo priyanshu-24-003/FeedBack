@@ -9,33 +9,28 @@ import warnings
 warnings.simplefilter("ignore", UserWarning)
 warnings.filterwarnings("ignore")
 
-from src.model.credents import Credential
+from src.connections.credentials import Credential
 
 logging.critical("Registering model to the 'staging' area")
 
 # Below code block is for production use
 # -------------------------------------------------------------------------------------
 # Set up DagsHub credentials for MLflow tracking
-# dagshub_token = os.getenv("CAPSTONE_TEST")
-# if not dagshub_token:
-#     raise EnvironmentError("CAPSTONE_TEST environment variable is not set")
+dagshub_token = os.getenv(Credential.Dags_Token)
+if not dagshub_token:
+    raise EnvironmentError("DAGS_TOKEN environment variable is not set")
 
-# os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
-# os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
+os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
+os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
 
-# dagshub_url = "https://dagshub.com"
-# repo_owner = "vikashdas770"
-# repo_name = "YT-Capstone-Project"
-# # Set up MLflow tracking URI
-# mlflow.set_tracking_uri(f'{dagshub_url}/{repo_owner}/{repo_name}.mlflow')
-# -------------------------------------------------------------------------------------
+dagshub_url = "https://dagshub.com"
+repo_owner = Credential.OWNER
+repo_name = Credential.PROJECT_NAME
 
-
-# Below code block is for local use
-# -------------------------------------------------------------------------------------
+# Set up MLflow tracking URI
 mlflow.set_tracking_uri(Credential.URI)
-dagshub.init(repo_owner=Credential.OWNER, repo_name=Credential.PROJECT_NAME, mlflow=True)
 # -------------------------------------------------------------------------------------
+
 
 
 def load_model_info(file_path: str) -> dict:

@@ -17,27 +17,19 @@ logging.critical('Model Evaluation Started on tracking server dagshub ')
 # Below code block is for production use
 # -------------------------------------------------------------------------------------
 # Set up DagsHub credentials for MLflow tracking
-# dagshub_token = os.getenv("CAPSTONE_TEST")
-# if not dagshub_token:
-#     raise EnvironmentError("CAPSTONE_TEST environment variable is not set")
+dagshub_token = os.getenv(Credential.Dags_Token)
+if not dagshub_token:
+    raise EnvironmentError("DAGS_TOKEN environment variable is not set")
 
-# os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
-# os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
+os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
+os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
 
-# dagshub_url = "https://dagshub.com"
-# repo_owner = "vikashdas770"
-# repo_name = "YT-Capstone-Project"
+dagshub_url = "https://dagshub.com"
+repo_owner = Credential.OWNER
+repo_name = Credential.PROJECT_NAME
 
-# # Set up MLflow tracking URI
-# mlflow.set_tracking_uri(f'{dagshub_url}/{repo_owner}/{repo_name}.mlflow')
-# -------------------------------------------------------------------------------------
-
-# Below code block is for local use
-# -------------------------------------------------------------------------------------
-mlflow_uri = os.getenv(Credential.URI)
-repo_owner = os.getenv(Credential.OWNER)
-mlflow.set_tracking_uri(mlflow_uri)
-dagshub.init(repo_owner=repo_owner, repo_name=Credential.PROJECT_NAME, mlflow=True)
+# Set up MLflow tracking URI
+mlflow.set_tracking_uri(Credential.URI)
 # -------------------------------------------------------------------------------------
 
 
