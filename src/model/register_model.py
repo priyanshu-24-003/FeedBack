@@ -28,7 +28,7 @@ repo_owner = Credential.OWNER
 repo_name = Credential.PROJECT_NAME
 
 # Set up MLflow tracking URI
-mlflow.set_tracking_uri(Credential.URI)
+mlflow.set_tracking_uri(f'{dagshub_url}/{repo_owner}/{repo_name}.mlflow')
 # -------------------------------------------------------------------------------------
 
 
