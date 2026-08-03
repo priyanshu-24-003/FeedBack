@@ -15,7 +15,7 @@ import warnings
 warnings.simplefilter("ignore", UserWarning)
 warnings.filterwarnings("ignore")
 
-from src.credents import Credential
+from src.connections.credentials import Credential
 
 def lemmatization(text):
     """Lemmatize the text."""

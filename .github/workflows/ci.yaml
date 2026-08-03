@@ -57,5 +57,6 @@ jobs:
         if: success()
         env:
           OWNER: ${{ secrets.OWNER }}
+          URI: ${{ secrets.URI }}
           DAGS_TOKEN: ${{ secrets.DAGS_TOKEN }}
         run: python -m unittest tests/test_flask_app.py
