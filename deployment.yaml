@@ -45,17 +45,17 @@ spec:
               name: capstone-secret
               key: AWS_SECRET_KEY
 
-        # - name: URI
-        #   valueFrom:
-        #     secretKeyRef:
-        #       name: capstone-secret
-        #       key: URI
+        - name: URI
+          valueFrom:
+            secretKeyRef:
+              name: capstone-secret
+              key: URI
 
-        # - name: OWNER
-        #   valueFrom:
-        #     secretKeyRef:
-        #       name: capstone-secret
-        #       key: OWNER
+        - name: OWNER
+          valueFrom:
+            secretKeyRef:
+              name: capstone-secret
+              key: OWNER
    
 
 ---
