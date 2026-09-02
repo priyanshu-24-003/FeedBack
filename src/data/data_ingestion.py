@@ -77,10 +77,7 @@ def main():
         logging.critical("data Ingestion started")
         params = load_params(params_path='params.yaml')
         test_size = params['data_ingestion']['test_size']
-        # test_size = 0.2
         
-        # df = load_data(data_url='https://raw.githubusercontent.com/vikashishere/Datasets/refs/heads/main/data.csv')
-
         Bucket_Name = os.getenv(Credential.S3_Bucket_Name)
         Access_Key = os.getenv(Credential.Access_Key)
         Secret_Key = os.getenv(Credential.Secret_Key)

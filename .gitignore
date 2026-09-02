@@ -8,6 +8,7 @@ src/connections/credents.py
 src/model/credents.py
 src/credents.py
 
+key-pair-new-prom-server.pem
 
 local_s3/
 data/raw
