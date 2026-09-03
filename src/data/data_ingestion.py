@@ -44,15 +44,17 @@ def load_data(data_url: str) -> pd.DataFrame:
 def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
     """Preprocess the data."""
     try:
-        # df.drop(columns=['tweet_id'], inplace=True)
         
         logging.info("pre-processing...")
+
         #BinaryLabelSelection
         final_df = df[df['sentiment'].isin(['positive', 'negative'])]
+
         #LabelEncoding 
         final_df['sentiment'] = final_df['sentiment'].replace({'positive': 1, 'negative': 0})
         logging.info('Data preprocessing completed')
         return final_df
+    
     except KeyError as e:
         logging.error('Missing column in the dataframe: %s', e)
         raise
@@ -77,6 +79,7 @@ def main():
         logging.critical("data Ingestion started")
         params = load_params(params_path='params.yaml')
         test_size = params['data_ingestion']['test_size']
+
         
         Bucket_Name = os.getenv(Credential.S3_Bucket_Name)
         Access_Key = os.getenv(Credential.Access_Key)
@@ -84,6 +87,7 @@ def main():
         
         s3 = s3_connection.s3_operations(Bucket_Name, Access_Key, Secret_Key)
         df = s3.fetch_file_from_s3("data.csv")
+
 
         final_df = preprocess_data(df)
         train_data, test_data = train_test_split(final_df, test_size=test_size, random_state=42)

@@ -38,20 +38,12 @@ jobs:
         run: |
           dvc repro
 
-
       - name: Run model tests
         env:
           OWNER: ${{ secrets.OWNER }}
           DAGS_TOKEN: ${{ secrets.DAGS_TOKEN }}
         run: |
           python -m unittest tests/test_model.py
-
-      - name: Promote model to production
-        if: success()
-        env:
-          OWNER: ${{ secrets.OWNER }}
-          DAGS_TOKEN: ${{ secrets.DAGS_TOKEN }}
-        run: python scripts/promote_model.py
 
       - name: Run Flask app tests
         if: success()
@@ -86,6 +78,7 @@ jobs:
       - name: Push Docker image to ECR
         run: |
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:latest
+
 
       - name: Set Up kubectl
         uses: azure/setup-kubectl@v3

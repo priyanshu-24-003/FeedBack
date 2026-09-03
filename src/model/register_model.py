@@ -8,10 +8,15 @@ import dagshub
 import warnings
 warnings.simplefilter("ignore", UserWarning)
 warnings.filterwarnings("ignore")
+import pickle
+
+from src.model.model_evaluation import load_model
+from src.data.data_ingestion import load_params
 
 from src.connections.credentials import Credential
 
 logging.critical("Registering model to the 'staging' area")
+
 
 # Below code block is for production use
 # -------------------------------------------------------------------------------------
@@ -47,36 +52,36 @@ def load_model_info(file_path: str) -> dict:
         logging.error('Unexpected error occurred while loading the model info: %s', e)
         raise
 
-def register_model(model_name: str, model_info: dict):
+def register_model(model, model_name: str, model_info: dict):
     """Register the model to the MLflow Model Registry."""
     try:
         model_uri = f"runs:/{model_info['run_id']}/{model_info['model_path']}"
         
-        # Register the model
-        model_version = mlflow.register_model(model_uri, model_name)
-        
-        # Transition the model to "Staging" stage
-        client = mlflow.tracking.MlflowClient()
-        client.transition_model_version_stage(
-            name=model_name,
-            version=model_version.version,
-            stage="Staging"
-        )
-        
-        logging.debug(f'Model {model_name} version {model_version.version} registered and transitioned to Staging.')
+
+        mlflow.set_experiment("My-DVC-Pipeline-Experiment")
+        with mlflow.start_run(run_id=model_info['run_id']):
+
+            model_info = mlflow.sklearn.log_model(sk_model=model, artifact_path=model_info['model_path'], registered_model_name=model_name)
+
+        logging.debug(f'Model {model_name} version {model_info.registered_model_version} registered and transitioned to Staging.')
+
     except Exception as e:
         logging.error('Error during model registration: %s', e)
         raise
 
 def main():
+    params = load_params('params.yaml')
+    if not params['registration']['register']:
+        logging.info("Model registration is disabled in params.yaml. Exiting.")
+        return None
     
-
     try:
         model_info_path = 'reports/experiment_info.json'
         model_info = load_model_info(model_info_path)
-        
+        clf = load_model('./models/model.pkl')
         model_name = "my_model"
-        register_model(model_name, model_info)
+        register_model(clf, model_name, model_info)
+
 
         logging.critical("Model Registration completed")
 

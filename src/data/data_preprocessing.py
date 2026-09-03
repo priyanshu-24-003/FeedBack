@@ -12,34 +12,31 @@ nltk.download('wordnet')
 nltk.download('stopwords')
 
 def preprocess_dataframe(df, col='text'):
-    """
-    Preprocess a DataFrame by applying text preprocessing to a specific column.
 
-    Args:
-        df (pd.DataFrame): The DataFrame to preprocess.
-        col (str): The name of the column containing text.
-
-    Returns:
-        pd.DataFrame: The preprocessed DataFrame.
-    """
     # Initialize lemmatizer and stopwords
     lemmatizer = WordNetLemmatizer()
     stop_words = set(stopwords.words("english"))
 
     def preprocess_text(text):
         """Helper function to preprocess a single text string."""
+
         # Remove URLs
         text = re.sub(r'https?://\S+|www\.\S+', '', text)
+
         # Remove numbers
         text = ''.join([char for char in text if not char.isdigit()])
+
         # Convert to lowercase
         text = text.lower()
+
         # Remove punctuations
         text = re.sub('[%s]' % re.escape(string.punctuation), ' ', text)
         text = text.replace('؛', "")
         text = re.sub('\s+', ' ', text).strip()
+
         # Remove stop words
         text = " ".join([word for word in text.split() if word not in stop_words])
+
         # Lemmatization
         text = " ".join([lemmatizer.lemmatize(word) for word in text.split()])
         return text
@@ -47,10 +44,6 @@ def preprocess_dataframe(df, col='text'):
     # Apply preprocessing to the specified column
     df[col] = df[col].apply(preprocess_text)
 
-    # Remove small sentences (less than 3 words)
-    # df[col] = df[col].apply(lambda x: np.nan if len(str(x).split()) < 3 else x)
-
-    # Drop rows with NaN values
     df = df.dropna(subset=[col])
     logging.info("Data pre-processing completed")
     return df
@@ -59,6 +52,7 @@ def preprocess_dataframe(df, col='text'):
 def main():
     try:
         logging.critical("Data Pre-Processsing Started")
+
         # Fetch the data from data/raw
         train_data = pd.read_csv('./data/raw/train.csv')
         test_data = pd.read_csv('./data/raw/test.csv')
@@ -77,6 +71,7 @@ def main():
         
         logging.info('Processed data saved to %s', data_path)
         logging.critical("Data Pre-Processsing Ended \n")
+        
     except Exception as e:
         logging.error('Failed to complete the data transformation process: %s', e)
         print(f"Error: {e}")

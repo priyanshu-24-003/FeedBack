@@ -1,12 +1,14 @@
 # load test + signature test + performance test
 
 import unittest
+from dulwich.objects import cls
 import mlflow
 import os
 import pandas as pd
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 import pickle
 from src.connections.credentials import Credential
+from src.connections import s3_connection
 
 class TestModelLoading(unittest.TestCase):
 
@@ -33,7 +35,12 @@ class TestModelLoading(unittest.TestCase):
         cls.new_model = mlflow.pyfunc.load_model(cls.new_model_uri)
 
         # Load the vectorizer
-        cls.vectorizer = pickle.load(open('models/vectorizer.pkl', 'rb'))
+        Bucket_Name = os.getenv(Credential.S3_Bucket_Name)
+        Access_Key = os.getenv(Credential.Access_Key)
+        Secret_Key = os.getenv(Credential.Secret_Key)
+        
+        s3 = s3_connection.s3_operations(Bucket_Name, Access_Key, Secret_Key)
+        cls.vectorizer = s3.load_pkl('vectorizer.pkl')
 
         # Load holdout test data
         cls.holdout_data = pd.read_csv('data/processed/test_bow.csv')

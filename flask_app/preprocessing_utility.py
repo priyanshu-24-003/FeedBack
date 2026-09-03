@@ -1,51 +1,73 @@
-import numpy as np
+
+from flask import Flask, render_template, request
+import mlflow
+import pickle
+import os
 import pandas as pd
-import re
-import string
-import nltk
-from nltk.corpus import stopwords
+from prometheus_client import Counter, Histogram, generate_latest, CollectorRegistry, CONTENT_TYPE_LATEST
+import time
 from nltk.stem import WordNetLemmatizer
+from nltk.corpus import stopwords
+import string
+import re
+import dagshub
+import numpy as np
 
-# Ensure stopwords and lemmatizer are downloaded
-nltk.download('stopwords')
-nltk.download('wordnet')
+import warnings
+warnings.simplefilter("ignore", UserWarning)
+warnings.filterwarnings("ignore")
 
-# Load stop words once globally
-STOP_WORDS = set(stopwords.words("english"))
-LEMMATIZER = WordNetLemmatizer()
 
-def preprocess_text(text):
-    """
-    Applies multiple text preprocessing steps:
-    - Lowercasing
-    - Removing stop words
-    - Removing numbers
-    - Removing punctuation
-    - Removing URLs
-    - Lemmatization
-    """
-    if not isinstance(text, str):
-        return ""
+def lemmatization(text):
+    """Lemmatize the text."""
+    lemmatizer = WordNetLemmatizer()
+    text = text.split()
+    text = [lemmatizer.lemmatize(word) for word in text]
+    return " ".join(text)
 
-    # Lowercase and tokenize
-    words = text.lower().split()
+def remove_stop_words(text):
+    """Remove stop words from the text."""
+    stop_words = set(stopwords.words("english"))
+    text = [word for word in str(text).split() if word not in stop_words]
+    return " ".join(text)
 
-    # Remove stop words, numbers, and lemmatize
-    words = [
-        LEMMATIZER.lemmatize(re.sub(r'\d+', '', word))  # Remove numbers and lemmatize
-        for word in words if word not in STOP_WORDS
-    ]
+def removing_numbers(text):
+    """Remove numbers from the text."""
+    text = ''.join([char for char in text if not char.isdigit()])
+    return text
 
-    # Remove punctuation
-    cleaned_text = ' '.join(words)
-    cleaned_text = re.sub(f"[{re.escape(string.punctuation)}]", " ", cleaned_text)
-    cleaned_text = re.sub(r"https?://\S+|www\.\S+", "", cleaned_text)  # Remove URLs
-    cleaned_text = re.sub(r"\s+", " ", cleaned_text).strip()  # Remove extra spaces
+def lower_case(text):
+    """Convert text to lower case."""
+    text = text.split()
+    text = [word.lower() for word in text]
+    return " ".join(text)
 
-    return cleaned_text
+def removing_punctuations(text):
+    """Remove punctuations from the text."""
+    text = re.sub('[%s]' % re.escape(string.punctuation), ' ', text)
+    text = text.replace('؛', "")
+    text = re.sub('\s+', ' ', text).strip()
+    return text
 
-def remove_small_sentences(df, column='text', min_words=3):
-    """
-    Removes rows where the specified column contains sentences with fewer than `min_words` words.
-    """
-    return df[df[column].apply(lambda x: len(str(x).split()) >= min_words)].reset_index(drop=True)
+def removing_urls(text):
+    """Remove URLs from the text."""
+    url_pattern = re.compile(r'https?://\S+|www\.\S+')
+    return url_pattern.sub(r'', text)
+
+def remove_small_sentences(df):
+    """Remove sentences with less than 3 words."""
+    for i in range(len(df)):
+        if len(df.text.iloc[i].split()) < 3:
+            df.text.iloc[i] = np.nan
+
+def normalize_text(text):
+    text = lower_case(text)
+    text = remove_stop_words(text)
+    text = removing_numbers(text)
+    text = removing_punctuations(text)
+    text = removing_urls(text)
+    text = lemmatization(text)
+
+    return text
+
+

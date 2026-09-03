@@ -6,6 +6,8 @@ import yaml
 from src.logger import logging
 # import logging
 import pickle
+from src.connections import s3_connection
+from src.connections.credentials import Credential
 
 
 def load_params(params_path: str) -> dict:
@@ -47,10 +49,15 @@ def apply_bow(train_data: pd.DataFrame, test_data: pd.DataFrame, max_features: i
 
         X_train = train_data['review'].values
         y_train = train_data['sentiment'].values
+
         X_test = test_data['review'].values
         y_test = test_data['sentiment'].values
 
+
         X_train_bow = vectorizer.fit_transform(X_train)
+        """
+        Not Fitting the Vectorizer on the test data to avoid data leakage
+        """
         X_test_bow = vectorizer.transform(X_test)
 
         train_df = pd.DataFrame(X_train_bow.toarray())
@@ -59,7 +66,17 @@ def apply_bow(train_data: pd.DataFrame, test_data: pd.DataFrame, max_features: i
         test_df = pd.DataFrame(X_test_bow.toarray())
         test_df['label'] = y_test
 
+
+        ## Another Artifact of This component.
         pickle.dump(vectorizer, open('models/vectorizer.pkl', 'wb'))
+
+        Bucket_Name = os.getenv(Credential.S3_Bucket_Name)
+        Access_Key = os.getenv(Credential.Access_Key)
+        Secret_Key = os.getenv(Credential.Secret_Key)
+        
+        s3 = s3_connection.s3_operations(Bucket_Name, Access_Key, Secret_Key)
+        df = s3.Push_file_to_s3("models/vectorizer.pkl", "vectorizer.pkl")
+
         logging.info('Bag of Words applied and data transformed')
 
         return train_df, test_df
@@ -83,7 +100,6 @@ def main():
 
         params = load_params('params.yaml')
         max_features = params['feature_engineering']['max_features']
-        # max_features = 20
 
         train_data = load_data('./data/interim/train_processed.csv')
         test_data = load_data('./data/interim/test_processed.csv')

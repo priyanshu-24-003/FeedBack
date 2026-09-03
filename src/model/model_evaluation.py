@@ -4,9 +4,12 @@ import pickle
 import json
 from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score
 import logging
+
+
 import mlflow
 import mlflow.sklearn
 import dagshub
+
 import os
 from src.logger import logging
 from src.connections.credentials import Credential
@@ -14,8 +17,8 @@ from src.connections.credentials import Credential
 logging.critical('Model Evaluation Started on tracking server dagshub ')
 
 
-# Below code block is for production use
-# -------------------------------------------------------------------------------------
+# Below code block is for production use , for A server to get authorized to access Dagshub.
+# -----------------------------------------------------------------------------------------
 # Set up DagsHub credentials for MLflow tracking
 dagshub_token = os.getenv(Credential.Dags_Token)
 if not dagshub_token:
@@ -31,7 +34,7 @@ repo_name = Credential.PROJECT_NAME
 # Set up MLflow tracking URI
 mlflow.set_tracking_uri(f'{dagshub_url}/{repo_owner}/{repo_name}.mlflow')
 
-# -------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------
 
 
 def load_model(file_path: str):
@@ -118,6 +121,9 @@ def main():
             metrics = evaluate_model(clf, X_test, y_test)
             
             save_metrics(metrics, 'reports/metrics.json')
+
+            # Log the metrics file to MLflow
+            mlflow.log_artifact('reports/metrics.json')
             
             # Log metrics to MLflow
             for metric_name, metric_value in metrics.items():
@@ -128,16 +134,9 @@ def main():
                 params = clf.get_params()
                 for param_name, param_value in params.items():
                     mlflow.log_param(param_name, param_value)
-            
-            # Log model to MLflow
-            # We usually don't save models to experiment tracking server
-            mlflow.sklearn.log_model(clf, "model") 
-            
+                        
             # Save model info
             save_model_info(run.info.run_id, "model", 'reports/experiment_info.json')
-            
-            # Log the metrics file to MLflow
-            mlflow.log_artifact('reports/metrics.json')
 
             logging.critical('Model Evaluation Completed \n')
         except Exception as e:

@@ -1,12 +1,13 @@
 import boto3
 import pandas as pd
-import logging
-from src.logger import logging
+try:    
+    from src.logger import logging
+except Exception as e:
+    import logging
+    
 from io import StringIO
+import pickle
 
-# # Configure logging
-# logging.basicConfig(level=logging.INFO)
-# logger = logging.getLogger(__name__)
 
 class s3_operations:
     def __init__(self, bucket_name, aws_access_key, aws_secret_key, region_name="us-east-1"):
@@ -23,11 +24,7 @@ class s3_operations:
         logging.info("Data Ingestion from S3 bucket initialized")
 
     def fetch_file_from_s3(self, file_key):
-        """
-        Fetches a CSV file from the S3 bucket and returns it as a Pandas DataFrame.
-        :param file_key: S3 file path (e.g., 'data/data.csv')
-        :return: Pandas DataFrame
-        """
+        
         try:
             logging.info(f"Fetching file '{file_key}' from S3 bucket '{self.bucket_name}'...")
             obj = self.s3_client.get_object(Bucket=self.bucket_name, Key=file_key)
@@ -37,4 +34,36 @@ class s3_operations:
         except Exception as e:
             logging.exception(f"❌ Failed to fetch '{file_key}' from S3: {e}")
             return None
+
+
+    def Push_file_to_s3(self,from_file, file_key):
+
+        try:
+            logging.info(f"Pushing file '{file_key}' to '{self.bucket_name}'...")
+
+            self.s3_client.upload_file(
+                Filename=from_file,
+                Bucket=self.bucket_name,
+                Key=file_key,
+            )
+
+            logging.info(f"Pushed file '{file_key}' to '{self.bucket_name}'...")
+
+        except Exception as e:
+            logging.exception(f"❌ Failed to push {file_key}' to S3: {e}")
+            return None
+
+
+    def load_pkl(self, file):
+        try:
+            response = self.s3_client.get_object(Bucket=self.bucket_name, Key=file)
+            pkl_bytes = response["Body"].read()
+            pkl = pickle.loads(pkl_bytes)
+            logging.info(f'loaded the vectorizer from s3')
+            return pkl
+        except Exception as e:
+            logging.info(f'Could notload the vectorizer from s3')
+            return None
+
+
 

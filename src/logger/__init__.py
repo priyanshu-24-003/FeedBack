@@ -4,17 +4,15 @@ from logging.handlers import RotatingFileHandler
 from datetime import datetime
 import sys
 
-import inspect
-
 def caller():
-    # Look back 1 frame in the stack to find the caller
-    caller_frame = inspect.stack()[1]
-    caller_filename = os.path.basename(caller_frame.filename)
-    return caller_filename
+    # Find the file that imported logger in its execution
+    main_script_path = sys.modules['__main__'].__file__
+    caller_name = main_script_path.split('/')[-1]
+    return caller_name
 
 # Constants for log configuration
 LOG_DIR = f"logs/{datetime.now().strftime('%m_%d_%Y_%H')}"
-LOG_FILE = f"{datetime.now().strftime('%m_%d_%Y_%H_%M_%S')}{caller()}.log"
+LOG_FILE = f"{datetime.now().strftime('%m_%d_%Y_%H_%M_%S')}_{caller()}.log"
 MAX_LOG_SIZE = 5 * 1024 * 1024  # 5 MB
 BACKUP_COUNT = 3  # Number of backup log files to keep
 
