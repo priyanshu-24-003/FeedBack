@@ -18,7 +18,7 @@ warnings.filterwarnings("ignore")
 
 from src.connections.credentials import Credential
 from src.connections import s3_connection
-from preprocessing_utility import normalize_text
+from src.utilities.preprocessing_utility import normalize_text
 
 
 #Dags_HUb authentication

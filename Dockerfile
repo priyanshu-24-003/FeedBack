@@ -9,6 +9,7 @@ COPY flask_app/ /app/
 #moving Credential file to working dir
 # COPY src/connections/credentials.py /app/src/connections/credentials.py
 COPY src/connections/  /app/src/connections/
+COPY src/utilities/   /app/src/utilities
 
 #exporting the dependencies in the docker image for our docker container to use.
 #This requirements.txt is actually from inside the app.
