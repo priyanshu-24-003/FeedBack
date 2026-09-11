@@ -2,7 +2,10 @@
 
 
 class Credential():
-
+    """
+    These are the secrets taken from environment.
+    """
+    
     URI = "URI"
     OWNER = "OWNER"
     PROJECT_NAME = 'FeedBack'
