@@ -52,8 +52,8 @@ jobs:
       - name: Login to AWS ECR
         if: success()
         run: |
-            aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY }}
-            aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_KEY }}
+            aws configure set aws_access_key_id $AWS_ACCESS_KEY
+            aws configure set aws_secret_access_key $AWS_SECRET_KEY
             aws configure set region ${{ secrets.AWS_REGION }}
             aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
 
@@ -87,11 +87,11 @@ jobs:
       - name: Create Kubernetes Secret
         run: |
           kubectl create secret generic capstone-secret \
-            --from-literal=DAGS_TOKEN=${{ secrets.DAGS_TOKEN }} \
-            --from-literal=AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }} \
-            --from-literal=AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }} \
-            --from-literal=URI=${{ secrets.URI }} \
-            --from-literal=OWNER=${{ secrets.OWNER }} \
+            --from-literal=DAGS_TOKEN=$DAGS_TOKEN \
+            --from-literal=AWS_ACCESS_KEY=$AWS_ACCESS_KEY \
+            --from-literal=AWS_SECRET_KEY=$AWS_SECRET_KEY \
+            --from-literal=URI=$secrets.URI \
+            --from-literal=OWNER=$OWNER\
             --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Deploy to EKS
