@@ -48,8 +48,16 @@ class TestModelLoading(unittest.TestCase):
     @staticmethod
     def get_latest_model_version(model_name, stage="Staging"):
         client = mlflow.MlflowClient()
-        latest_version = client.get_latest_versions(model_name, stages=[stage])
-        return latest_version[0].version if latest_version else None
+    
+        # Delete previously registerd model
+        # for i in range(36, 48):
+        #     client.delete_model_version(name=model_name, version=f"{i}")
+    
+        versions = client.search_model_versions(f"name='{model_name}'")
+        if not versions:
+            raise ValueError(f"No registered model versions found for '{model_name}'")
+        
+        latest_version = max(versions, key=lambda v: int(v.version))
 
     def test_model_loaded_properly(self):
         self.assertIsNotNone(self.new_model)
