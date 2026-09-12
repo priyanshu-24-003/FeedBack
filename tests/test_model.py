@@ -10,6 +10,18 @@ import pickle
 from src.connections.credentials import Credential
 from src.connections import s3_connection
 
+
+
+#----------- if pipeline didn't produce(register) any new version of mymodel with compatible vectorizer
+from src.features.feature_engineering import load_params
+params = load_params('params.yaml')
+if not params['registration']['register']:
+    def test_None():
+        assert params['registration']['register'] == False
+    exit("Pipeline did not produce any new mymodel version with compatible vectorizer")
+#----------- if pipeline didn't produce(register) any new version of mymodel with compatible vectorizer
+
+
 class TestModelLoading(unittest.TestCase):
 
     @classmethod

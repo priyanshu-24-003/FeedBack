@@ -8,24 +8,8 @@ from src.logger import logging
 import pickle
 from src.connections import s3_connection
 from src.connections.credentials import Credential
+from src.utilities.utils_functions import load_params
 
-
-def load_params(params_path: str) -> dict:
-    """Load parameters from a YAML file."""
-    try:
-        with open(params_path, 'r') as file:
-            params = yaml.safe_load(file)
-        logging.debug('Parameters retrieved from %s', params_path)
-        return params
-    except FileNotFoundError:
-        logging.error('File not found: %s', params_path)
-        raise
-    except yaml.YAMLError as e:
-        logging.error('YAML error: %s', e)
-        raise
-    except Exception as e:
-        logging.error('Unexpected error: %s', e)
-        raise
 
 def load_data(file_path: str) -> pd.DataFrame:
     """Load data from a CSV file."""
@@ -69,13 +53,6 @@ def apply_bow(train_data: pd.DataFrame, test_data: pd.DataFrame, max_features: i
 
         ## Another Artifact of This component.
         pickle.dump(vectorizer, open('models/vectorizer.pkl', 'wb'))
-
-        Bucket_Name = os.getenv(Credential.S3_Bucket_Name)
-        Access_Key = os.getenv(Credential.Access_Key)
-        Secret_Key = os.getenv(Credential.Secret_Key)
-        
-        s3 = s3_connection.s3_operations(Bucket_Name, Access_Key, Secret_Key)
-        df = s3.Push_file_to_s3("models/vectorizer.pkl", "vectorizer.pkl")
 
         logging.info('Bag of Words applied and data transformed')
 

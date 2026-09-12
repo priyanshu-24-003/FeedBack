@@ -11,9 +11,10 @@ warnings.filterwarnings("ignore")
 import pickle
 
 from src.model.model_evaluation import load_model
-from src.data.data_ingestion import load_params
+from src.utilities.utils_functions import load_params
 
 from src.connections.credentials import Credential
+from src.connections import s3_connection
 
 logging.critical("Registering model to the 'staging' area")
 
@@ -64,6 +65,15 @@ def register_model(model, model_name: str, model_info: dict):
             model_info = mlflow.sklearn.log_model(sk_model=model, artifact_path=model_info['model_path'], registered_model_name=model_name)
 
         logging.debug(f'Model {model_name} version {model_info.registered_model_version} registered and transitioned to Staging.')
+
+        Bucket_Name = os.getenv(Credential.S3_Bucket_Name)
+        Access_Key = os.getenv(Credential.Access_Key)
+        Secret_Key = os.getenv(Credential.Secret_Key)
+        
+        s3 = s3_connection.s3_operations(Bucket_Name, Access_Key, Secret_Key)
+        df = s3.Push_file_to_s3("models/vectorizer.pkl", "vectorizer.pkl")
+
+        logging.debug(f"A compatible Vectorizer to mymodel has been pushed to s3.")
 
     except Exception as e:
         logging.error('Error during model registration: %s', e)
